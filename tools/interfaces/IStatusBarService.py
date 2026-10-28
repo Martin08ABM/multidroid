@@ -45,9 +45,9 @@ class IStatusBarService:
 def get_service(args):
     helpers.drivers.loadBinderNodes(args)
     try:
-        serviceManager = gbinder.ServiceManager("/dev/" + args.BINDER_DRIVER, args.SERVICE_MANAGER_PROTOCOL, args.BINDER_PROTOCOL)
+        serviceManager = gbinder.ServiceManager(helpers.drivers.binder_node_path(args.BINDER_DRIVER), args.SERVICE_MANAGER_PROTOCOL, args.BINDER_PROTOCOL)
     except TypeError:
-        serviceManager = gbinder.ServiceManager("/dev/" + args.BINDER_DRIVER)
+        serviceManager = gbinder.ServiceManager(helpers.drivers.binder_node_path(args.BINDER_DRIVER))
 
     if not serviceManager.is_present():
         logging.info("Waiting for binder Service Manager...")

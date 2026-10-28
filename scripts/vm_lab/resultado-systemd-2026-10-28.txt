@@ -1,0 +1,38 @@
+=== VM boot 1 ===
+[    0.068023] virt/tdx: TDX not supported by the host platform
+P+q6E616D65\[    1.028130] systemd[1]: Failed to initialize kmod context: Operation not supported
+[18t7[32766;32766H[6n8[!p]104\[0m[?7h[1G[0J
+[0;1;39mWelcome to [0m[1mMultiDroid VM Lab[0m[0;1;39m![0m
+
+
+]3008;start=21eb63f37159409985a287776ebf3cfd;user=root;hostname=cachyos;machineid=d0512efb77254441bba0a59ef9887570;bootid=3259793dda254e10b830da0e76c309bd;pid=1;pidfdid=1;comm=systemd;type=boot\[[0;32m  OK  [0m] Started [0;1;39mmultidroid-control.service[0m.
+
+[[0;32m  OK  [0m] Started [0;1;39mwaydroid-multi-container.service[0m.
+
+[[0;32m  OK  [0m] Reached target [0;1;39mdefault.target[0m.
+
+SYSTEMD_MANAGER_SIGKILL_REQUESTED
+SYSTEMD_INCOMPLETE_CGROUP_ABSENT_AFTER_UNIT_RESTART
+SYSTEMD_MANAGER_RESTART_ISOLATED=PASS
+[    4.016738] reboot: Power down
+
+=== VM boot 2 ===
+[    0.136297] virt/tdx: TDX not supported by the host platform
+P+q6E616D65\[    1.262746] systemd[1]: Failed to initialize kmod context: Operation not supported
+[18t7[32766;32766H[6n8[!p]104\[0m[?7h[1G[0J
+[0;1;39mWelcome to [0m[1mMultiDroid VM Lab[0m[0;1;39m![0m
+
+
+]3008;start=66ab7914aef94eb0b0b2b4560bb1d94e;user=root;hostname=cachyos;machineid=d0512efb77254441bba0a59ef9887570;bootid=41dadc44b24c499c9f62eb72e7ae01c7;pid=1;pidfdid=1;comm=systemd;type=boot\[[0;32m  OK  [0m] Started [0;1;39mmultidroid-control.service[0m.
+
+[[0;32m  OK  [0m] Started [0;1;39mwaydroid-multi-container.service[0m.
+
+[[0;32m  OK  [0m] Reached target [0;1;39mdefault.target[0m.
+
+SYSTEMD_REPLACEMENT_PRESERVED=PASS
+SYSTEMD_RECOVERY_SIGKILL_REQUESTED
+SYSTEMD_RECOVERY_RESTART_ISOLATED=PASS
+SYSTEMD_INCOMPLETE_AFTER_REBOOT=PASS
+SYSTEMD_STALE_JOURNALS_RECOVERED=PASS
+SYSTEMD_PERSISTENT_REBOOT=PASS
+[    4.351379] reboot: Power down

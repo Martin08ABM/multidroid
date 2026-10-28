@@ -17,7 +17,7 @@ import argparse
 from gi.repository import GLib
 
 def is_initialized(args):
-    return os.path.isfile(args.config) and os.path.isdir(tools.config.defaults["rootfs"])
+    return os.path.isfile(args.config) and os.path.isdir(args.instance_context.rootfs)
 
 def get_vendor_type(args):
     vndk_str = helpers.props.host_get(args, "ro.vndk.version")
@@ -69,7 +69,7 @@ def setup_config(args):
                 logging.warning("Found directory {} but missing system or vendor image, ignoring...".format(preinstalled_images))
 
     if not args.images_path:
-        args.images_path = tools.config.defaults["images_path"]
+        args.images_path = args.instance_context.images_path
     cfg["waydroid"]["images_path"] = args.images_path
 
     if has_preinstalled_images:
@@ -136,7 +136,7 @@ def init(args):
 
     status = "STOPPED"
     session = None
-    if os.path.exists(tools.config.defaults["lxc"] + "/waydroid"):
+    if os.path.exists(args.instance_context.lxc_dir):
         status = helpers.lxc.status(args)
     if status != "STOPPED":
         if "running_init_in_service" in args:
@@ -155,15 +155,15 @@ def init(args):
         helpers.images.get(args)
     else:
         helpers.images.remove_overlay(args)
-    if not os.path.isdir(tools.config.defaults["rootfs"]):
-        os.mkdir(tools.config.defaults["rootfs"])
-    if not os.path.isdir(tools.config.defaults["overlay"]):
-        os.mkdir(tools.config.defaults["overlay"])
-        os.mkdir(tools.config.defaults["overlay"]+"/vendor")
-    if not os.path.isdir(tools.config.defaults["overlay_rw"]):
-        os.mkdir(tools.config.defaults["overlay_rw"])
-        os.mkdir(tools.config.defaults["overlay_rw"]+"/system")
-        os.mkdir(tools.config.defaults["overlay_rw"]+"/vendor")
+    if not os.path.isdir(args.instance_context.rootfs):
+        os.mkdir(args.instance_context.rootfs)
+    if not os.path.isdir(args.instance_context.overlay):
+        os.mkdir(args.instance_context.overlay)
+        os.mkdir(args.instance_context.overlay+"/vendor")
+    if not os.path.isdir(args.instance_context.overlay_rw):
+        os.mkdir(args.instance_context.overlay_rw)
+        os.mkdir(args.instance_context.overlay_rw+"/system")
+        os.mkdir(args.instance_context.overlay_rw+"/vendor")
     helpers.drivers.probeAshmemDriver(args)
     helpers.lxc.setup_host_perms(args)
     helpers.lxc.set_lxc_config(args)

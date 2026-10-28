@@ -16,7 +16,8 @@ def load(args):
 
     for key in tools.config.defaults:
         if key in tools.config.config_keys and key not in cfg["waydroid"]:
-            cfg["waydroid"][key] = str(tools.config.defaults[key])
+            value = args.instance_context.images_path if key == "images_path" else tools.config.defaults[key]
+            cfg["waydroid"][key] = str(value)
 
         # We used to save default values in the config, which can *not* be
         # configured in "waydroid init". That doesn't make sense, we always

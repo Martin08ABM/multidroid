@@ -121,10 +121,10 @@ def replace(args, system_zip, system_time, vendor_zip, vendor_time):
     remove_overlay(args)
 
 def remove_overlay(args):
-    if os.path.isdir(tools.config.defaults["overlay_rw"]):
-        shutil.rmtree(tools.config.defaults["overlay_rw"])
-    if os.path.isdir(tools.config.defaults["overlay_work"]):
-        shutil.rmtree(tools.config.defaults["overlay_work"])
+    if os.path.isdir(args.instance_context.overlay_rw):
+        shutil.rmtree(args.instance_context.overlay_rw)
+    if os.path.isdir(args.instance_context.overlay_work):
+        shutil.rmtree(args.instance_context.overlay_work)
 
 def make_prop(args, cfg, full_props_path):
     if not os.path.isfile(args.work + "/waydroid_base.prop"):
@@ -162,43 +162,43 @@ def make_prop(args, cfg, full_props_path):
 def mount_rootfs(args, images_dir, session):
     cfg = tools.config.load(args)
     helpers.mount.mount(args, images_dir + "/system.img",
-                        tools.config.defaults["rootfs"], umount=True)
+                        args.instance_context.rootfs, umount=True)
     if cfg["waydroid"]["mount_overlays"] == "True":
         try:
-            helpers.mount.mount_overlay(args, [tools.config.defaults["overlay"],
-                                               tools.config.defaults["rootfs"]],
-                                    tools.config.defaults["rootfs"],
-                                    upper_dir=tools.config.defaults["overlay_rw"] + "/system",
-                                    work_dir=tools.config.defaults["overlay_work"] + "/system")
+            helpers.mount.mount_overlay(args, [args.instance_context.overlay,
+                                               args.instance_context.rootfs],
+                                    args.instance_context.rootfs,
+                                    upper_dir=args.instance_context.overlay_rw + "/system",
+                                    work_dir=args.instance_context.overlay_work + "/system")
         except RuntimeError:
             cfg["waydroid"]["mount_overlays"] = "False"
             tools.config.save(args, cfg)
             logging.warning("Mounting overlays failed. The feature has been disabled.")
 
     helpers.mount.mount(args, images_dir + "/vendor.img",
-                           tools.config.defaults["rootfs"] + "/vendor")
+                           args.instance_context.rootfs + "/vendor")
     if cfg["waydroid"]["mount_overlays"] == "True":
-        helpers.mount.mount_overlay(args, [tools.config.defaults["overlay"] + "/vendor",
-                                           tools.config.defaults["rootfs"] + "/vendor"],
-                                    tools.config.defaults["rootfs"] + "/vendor",
-                                    upper_dir=tools.config.defaults["overlay_rw"] + "/vendor",
-                                    work_dir=tools.config.defaults["overlay_work"] + "/vendor")
+        helpers.mount.mount_overlay(args, [args.instance_context.overlay + "/vendor",
+                                           args.instance_context.rootfs + "/vendor"],
+                                    args.instance_context.rootfs + "/vendor",
+                                    upper_dir=args.instance_context.overlay_rw + "/vendor",
+                                    work_dir=args.instance_context.overlay_work + "/vendor")
 
     for egl_path in ["/vendor/lib/egl", "/vendor/lib64/egl"]:
         if os.path.isdir(egl_path):
             helpers.mount.bind(
-                args, egl_path, tools.config.defaults["rootfs"] + egl_path)
+                args, egl_path, args.instance_context.rootfs + egl_path)
     if helpers.mount.ismount("/odm"):
         helpers.mount.bind(
-            args, "/odm", tools.config.defaults["rootfs"] + "/odm_extra")
+            args, "/odm", args.instance_context.rootfs + "/odm_extra")
     else:
         if os.path.isdir("/vendor/odm"):
             helpers.mount.bind(
-                args, "/vendor/odm", tools.config.defaults["rootfs"] + "/odm_extra")
+                args, "/vendor/odm", args.instance_context.rootfs + "/odm_extra")
 
     make_prop(args, session, args.work + "/waydroid.prop")
     helpers.mount.bind_file(args, args.work + "/waydroid.prop",
-                            tools.config.defaults["rootfs"] + "/vendor/waydroid.prop")
+                            args.instance_context.rootfs + "/vendor/waydroid.prop")
 
 def umount_rootfs(args):
-    helpers.mount.umount_all(args, tools.config.defaults["rootfs"])
+    helpers.mount.umount_all(args, args.instance_context.rootfs)

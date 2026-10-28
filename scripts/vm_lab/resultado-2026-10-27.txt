@@ -1,0 +1,59 @@
+WAYDROID_BPF_VM_LAB=START
+DEVICE /a/binder 242:1
+DEVICE /a/hwbinder 242:2
+DEVICE /a/vndbinder 242:3
+DEVICE /a/binder-control 242:0
+DEVICE /b/binder 242:5
+DEVICE /b/hwbinder 242:6
+DEVICE /b/vndbinder 242:7
+DEVICE /b/binder-control 242:4
+MKNOD_BASELINE=PASS
+FAILED_GATE_STAGE_0=PASS
+FAILED_GATE_STAGE_1=PASS
+FAILED_GATE_STAGE_2=PASS
+FAILED_GATE_STAGE_3=PASS
+helper=0 MKNOD_DENIED=EPERM (uid=0)
+helper=0 path=/a/binder expected=allow result=open errno=0
+helper=0 path=/a/hwbinder expected=allow result=open errno=0
+helper=0 path=/a/vndbinder expected=allow result=open errno=0
+helper=0 path=/a/binder-control expected=deny result=error errno=1
+helper=1 MKNOD_DENIED=EPERM (uid=0)
+helper=0 path=/b/binder expected=deny result=error errno=1
+helper=1 path=/a/binder expected=deny result=error errno=1
+helper=0 path=/b/hwbinder expected=deny result=error errno=1
+helper=1 path=/a/hwbinder expected=deny result=error errno=1
+helper=1 path=/a/vndbinder expected=deny result=error errno=1
+helper=1 path=/a/binder-control expected=deny result=error errno=1
+helper=1 path=/b/binder expected=allow result=open errno=0
+helper=1 path=/b/hwbinder expected=allow result=open errno=0
+helper=0 path=/b/vndbinder expected=deny result=error errno=1
+helper=0 path=/b/binder-control expected=deny result=error errno=1
+helper=1 path=/b/vndbinder expected=allow result=open errno=0
+helper=1 path=/b/binder-control expected=deny result=error errno=1
+helper=1 path=/a/binder expected=deny result=error errno=1
+helper=1 path=/a/hwbinder expected=deny result=error errno=1
+helper=1 path=/a/vndbinder expected=deny result=error errno=1
+helper=1 path=/a/binder-control expected=deny result=error errno=1
+helper=1 path=/b/binder expected=allow result=open errno=0
+helper=1 path=/b/hwbinder expected=allow result=open errno=0
+helper=1 path=/b/vndbinder expected=allow result=open errno=0
+helper=1 path=/b/binder-control expected=deny result=error errno=1
+helper=0 MKNOD_DENIED=EPERM (uid=0)
+helper=0 path=/a/binder expected=allow result=open errno=0
+helper=0 path=/a/hwbinder expected=allow result=open errno=0
+helper=0 path=/a/vndbinder expected=allow result=open errno=0
+helper=0 path=/a/binder-control expected=deny result=error errno=1
+helper=0 path=/b/binder expected=deny result=error errno=1
+helper=0 path=/b/hwbinder expected=deny result=error errno=1
+helper=0 path=/b/vndbinder expected=deny result=error errno=1
+helper=0 path=/b/binder-control expected=deny result=error errno=1
+helper=1 path=/a/binder expected=deny result=error errno=1
+helper=1 path=/a/hwbinder expected=deny result=error errno=1
+helper=1 path=/a/vndbinder expected=deny result=error errno=1
+helper=1 path=/a/binder-control expected=deny result=error errno=1
+helper=1 path=/b/binder expected=allow result=open errno=0
+helper=1 path=/b/hwbinder expected=allow result=open errno=0
+helper=1 path=/b/vndbinder expected=allow result=open errno=0
+helper=1 path=/b/binder-control expected=deny result=error errno=1
+LAB_RESULT=PASS
+[    0.757539] reboot: Power down

@@ -144,9 +144,9 @@ def prepare_drivers_once(args):
         helpers.drivers.probeAshmemDriver(args)
     helpers.drivers.loadBinderNodes(args)
     set_permissions(args, [
-        "/dev/" + args.BINDER_DRIVER,
-        "/dev/" + args.VNDBINDER_DRIVER,
-        "/dev/" + args.HWBINDER_DRIVER
+        helpers.drivers.binder_node_path(args.BINDER_DRIVER),
+        helpers.drivers.binder_node_path(args.VNDBINDER_DRIVER),
+        helpers.drivers.binder_node_path(args.HWBINDER_DRIVER)
     ], "666")
     prepared_drivers = True
 
@@ -169,7 +169,7 @@ def do_start(args, session):
     # Sensors
     if which("waydroid-sensord"):
         tools.helpers.run.user(
-            args, ["waydroid-sensord", "/dev/" + args.HWBINDER_DRIVER], output="background")
+            args, ["waydroid-sensord", helpers.drivers.binder_node_path(args.HWBINDER_DRIVER)], output="background")
 
     # Cgroup hacks
     if which("start"):
@@ -204,10 +204,10 @@ def do_start(args, session):
     # Create session-specific LXC config file
     helpers.lxc.generate_session_lxc_config(args, session)
     # Backwards compatibility
-    with open(tools.config.defaults["lxc"] + "/waydroid/config") as f:
+    with open(args.instance_context.lxc_dir + "/config") as f:
         if "config_session" not in f.read():
             helpers.mount.bind(args, session["waydroid_data"],
-                               tools.config.defaults["data"])
+                               args.instance_context.data_mount)
 
     # Mount rootfs
     cfg = tools.config.load(args)
@@ -260,7 +260,7 @@ def stop(args, quit_session=True):
 
         # Backwards compatibility
         with suppress(Exception):
-            helpers.mount.umount_all(args, tools.config.defaults["data"])
+            helpers.mount.umount_all(args, args.instance_context.data_mount)
 
         if "session" in args:
             if quit_session:

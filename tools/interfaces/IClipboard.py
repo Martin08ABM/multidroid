@@ -13,9 +13,9 @@ TRANSACTION_getClipboardData = 2
 def add_service(args, sendClipboardData, getClipboardData):
     helpers.drivers.loadBinderNodes(args)
     try:
-        serviceManager = gbinder.ServiceManager("/dev/" + args.BINDER_DRIVER, args.SERVICE_MANAGER_PROTOCOL, args.BINDER_PROTOCOL)
+        serviceManager = gbinder.ServiceManager(helpers.drivers.binder_node_path(args.BINDER_DRIVER), args.SERVICE_MANAGER_PROTOCOL, args.BINDER_PROTOCOL)
     except TypeError:
-        serviceManager = gbinder.ServiceManager("/dev/" + args.BINDER_DRIVER)
+        serviceManager = gbinder.ServiceManager(helpers.drivers.binder_node_path(args.BINDER_DRIVER))
 
     def response_handler(req, code, flags):
         logging.debug(

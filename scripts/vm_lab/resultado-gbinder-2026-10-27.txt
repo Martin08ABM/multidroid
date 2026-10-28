@@ -1,0 +1,82 @@
+WAYDROID_BPF_VM_LAB=START
+DEVICE /a/binder 242:1
+DEVICE /a/hwbinder 242:2
+DEVICE /a/vndbinder 242:3
+DEVICE /a/binder-control 242:0
+DEVICE /b/binder 242:5
+DEVICE /b/hwbinder 242:6
+DEVICE /b/vndbinder 242:7
+DEVICE /b/binder-control 242:4
+MKNOD_BASELINE=PASS
+FAILED_GATE_STAGE_0=PASS
+FAILED_GATE_STAGE_1=PASS
+FAILED_GATE_STAGE_2=PASS
+FAILED_GATE_STAGE_3=PASS
+helper=0 MKNOD_DENIED=EPERM (uid=0)
+helper=0 path=/a/binder expected=allow result=open errno=0
+helper=0 path=/a/hwbinder expected=allow result=open errno=0
+helper=0 path=/a/vndbinder expected=allow result=open errno=0
+helper=1 MKNOD_DENIED=EPERM (uid=0)
+helper=1 path=/a/binder expected=deny result=error errno=1
+helper=0 path=/a/binder-control expected=deny result=error errno=1
+helper=0 path=/b/binder expected=deny result=error errno=1
+helper=1 path=/a/hwbinder expected=deny result=error errno=1
+helper=1 path=/a/vndbinder expected=deny result=error errno=1
+helper=1 path=/a/binder-control expected=deny result=error errno=1
+helper=1 path=/b/binder expected=allow result=open errno=0
+helper=0 path=/b/hwbinder expected=deny result=error errno=1
+helper=0 path=/b/vndbinder expected=deny result=error errno=1
+helper=0 path=/b/binder-control expected=deny result=error errno=1
+helper=1 path=/b/hwbinder expected=allow result=open errno=0
+helper=1 path=/b/vndbinder expected=allow result=open errno=0
+helper=1 path=/b/binder-control expected=deny result=error errno=1
+helper=1 path=/a/binder expected=deny result=error errno=1
+helper=1 path=/a/hwbinder expected=deny result=error errno=1
+helper=1 path=/a/vndbinder expected=deny result=error errno=1
+helper=1 path=/a/binder-control expected=deny result=error errno=1
+helper=1 path=/b/binder expected=allow result=open errno=0
+helper=1 path=/b/hwbinder expected=allow result=open errno=0
+helper=1 path=/b/vndbinder expected=allow result=open errno=0
+helper=1 path=/b/binder-control expected=deny result=error errno=1
+helper=0 MKNOD_DENIED=EPERM (uid=0)
+helper=0 path=/a/binder expected=allow result=open errno=0
+helper=0 path=/a/hwbinder expected=allow result=open errno=0
+helper=0 path=/a/vndbinder expected=allow result=open errno=0
+helper=0 path=/a/binder-control expected=deny result=error errno=1
+helper=0 path=/b/binder expected=deny result=error errno=1
+helper=0 path=/b/hwbinder expected=deny result=error errno=1
+helper=0 path=/b/vndbinder expected=deny result=error errno=1
+helper=0 path=/b/binder-control expected=deny result=error errno=1
+helper=1 path=/a/binder expected=deny result=error errno=1
+helper=1 path=/a/hwbinder expected=deny result=error errno=1
+helper=1 path=/a/vndbinder expected=deny result=error errno=1
+helper=1 path=/a/binder-control expected=deny result=error errno=1
+helper=1 path=/b/binder expected=allow result=open errno=0
+helper=1 path=/b/hwbinder expected=allow result=open errno=0
+helper=1 path=/b/vndbinder expected=allow result=open errno=0
+helper=1 path=/b/binder-control expected=deny result=error errno=1
+REAL_HELPER: REAL_HELPER_ACCESS=PASS
+REAL_HELPER: {"uid": 1001, "gid": 1001, "devices": {"binder": {"major": 242, "minor": 5, "protocol": 8}, "hwbinder": {"major": 242, "minor": 6, "protocol": 8}, "vndbinder": {"major": 242, "minor": 7, "protocol": 8}}, "gbinder": true, "privileges_dropped": true, "control_visible": false, "host_etc_visible": false}
+REAL_HELPER_FAILED_STAGE_0=PASS
+REAL_HELPER_FAILED_STAGE_1=PASS
+REAL_HELPER_FAILED_STAGE_2=PASS
+REAL_HELPER_FAILED_STAGE_3=PASS
+REAL_HELPER_FAILED_STAGE_4=PASS
+INTERRUPTED_SUPERVISOR=PASS
+INTERRUPTED_SUPERVISOR=PASS
+INTERRUPTED_SUPERVISOR=PASS
+INTERRUPTED_SUPERVISOR=PASS
+INTERRUPTED_SUPERVISOR=PASS
+REAL_HELPER: REAL_HELPER_ACCESS=PASS
+REAL_HELPER: {"uid": 1000, "gid": 1000, "devices": {"binder": {"major": 242, "minor": 1, "protocol": 8}, "hwbinder": {"major": 242, "minor": 2, "protocol": 8}, "vndbinder": {"major": 242, "minor": 3, "protocol": 8}}, "gbinder": true, "privileges_dropped": true, "control_visible": false, "host_etc_visible": false}
+INTERRUPTED_RUNNING_SUPERVISOR=PASS
+REAL_HELPER: HELPER_CHECK=PASS
+REAL_HELPER: REAL_HELPER_ACCESS=PASS
+REAL_HELPER: {"uid": 1000, "gid": 1000, "devices": {"binder": {"major": 242, "minor": 1, "protocol": 8}, "hwbinder": {"major": 242, "minor": 2, "protocol": 8}, "vndbinder": {"major": 242, "minor": 3, "protocol": 8}}, "gbinder": true, "privileges_dropped": true, "control_visible": false, "host_etc_visible": false}
+REAL_HELPER: HELPER_CHECK=PASS
+REAL_HELPER: REAL_HELPER_ACCESS=PASS
+REAL_HELPER: {"uid": 1000, "gid": 1000, "devices": {"binder": {"major": 242, "minor": 1, "protocol": 8}, "hwbinder": {"major": 242, "minor": 2, "protocol": 8}, "vndbinder": {"major": 242, "minor": 3, "protocol": 8}}, "gbinder": true, "privileges_dropped": true, "control_visible": false, "host_etc_visible": false}
+REAL_HELPER: HELPER_CHECK=PASS
+REAL_GBINDER_SUPERVISION=PASS
+LAB_RESULT=PASS
+[    1.251610] reboot: Power down

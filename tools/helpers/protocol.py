@@ -8,7 +8,7 @@ def set_aidl_version(args):
     android_api = 0
     try:
         android_api = int(helpers.props.file_get(args,
-                tools.config.defaults["rootfs"] + "/system/build.prop",
+                args.instance_context.rootfs + "/system/build.prop",
                 "ro.build.version.sdk"))
     except Exception as e:
         logging.error("Failed to parse android version from system.img: %s", e)

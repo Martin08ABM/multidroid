@@ -5,6 +5,7 @@ import sys
 import logging
 import os
 import traceback
+import json
 import dbus.mainloop.glib
 import dbus
 import dbus.exceptions
@@ -13,10 +14,19 @@ from . import actions
 from . import config
 from . import helpers
 from .helpers import logging as tools_logging
+from multiinstance.context import default_context, registered_context
+from multiinstance.registry import Registry, RegistryError, default_root
 
 def prep_args(args):
     args.cache = {}
-    args.work = config.defaults["work"]
+    if args.instance:
+        args.instance_context = registered_context(
+            Registry(args.instance_root or default_root()).get(args.instance))
+    else:
+        if args.instance_root:
+            raise ValueError("--instance-root requires --instance")
+        args.instance_context = default_context(config.session_defaults["waydroid_data"])
+    args.work = args.instance_context.work
     args.config = args.work + "/waydroid.cfg"
     args.log = args.work + "/waydroid.log"
     args.sudo_timer = True
@@ -33,7 +43,18 @@ def main():
     try:
         # Parse arguments, set up logging
         args = helpers.arguments()
-        prep_args(args)
+        try:
+            prep_args(args)
+        except (RegistryError, OSError, ValueError) as exc:
+            print("Instance context error: " + str(exc), file=sys.stderr)
+            return 1
+
+        if args.action == "instance-info":
+            print(json.dumps(args.instance_context.describe(), indent=2))
+            return 0
+        if args.instance:
+            print("Named instance runtime is not implemented: D-Bus, Binder and networking are not isolated yet.", file=sys.stderr)
+            return 1
 
         if os.geteuid() == 0:
             if not os.path.exists(args.work):
@@ -162,7 +183,7 @@ def main():
 
         # Hints about the log file (print to stdout only)
         log_hint = "Run 'waydroid log' for details."
-        if not args or not os.path.exists(args.log) or not args.action == "container":
+        if not args or not args.log or not os.path.exists(args.log) or not args.action == "container":
             log_hint = ("Use '--details-to-stdout' to get more details:\n"
                          f"  {sys.argv[0]} --details-to-stdout {' '.join(sys.argv[1:])}")
         print(log_hint)

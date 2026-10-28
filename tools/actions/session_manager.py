@@ -47,6 +47,8 @@ def start(args, unlocked_cb=None, background=True):
         return
 
     session = copy.copy(tools.config.session_defaults)
+    session["waydroid_data"] = args.instance_context.user_data
+    session["waydroid_user_state"] = os.path.dirname(args.instance_context.user_data)
 
     # TODO: also support WAYLAND_SOCKET?
     wayland_display = session["wayland_display"]

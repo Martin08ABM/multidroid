@@ -1,0 +1,38 @@
+=== VM boot 1 ===
+[    0.070089] virt/tdx: TDX not supported by the host platform
+[    1.035496] systemd[1]: Failed to initialize kmod context: Operation not supported
+
+Welcome to MultiDroid VM Lab!
+
+
+[  OK  ] Started multidroid-control.service.
+
+[  OK  ] Started waydroid-multi-container.service.
+
+[  OK  ] Reached target default.target.
+
+CANDIDATE_OVERLAP=YES
+CANDIDATE_FOREIGN_POLICY_REFUSED=PASS
+CANDIDATE_FOREIGN_SANDBOX_PRESERVED=PASS
+CANDIDATE_BPF_FAILURE_BLOCKED=PASS
+CANDIDATE_INSTALLED_PROBES=PASS
+CANDIDATE_GATE_SIGKILL_REQUESTED
+CANDIDATE_GATE_SIGKILL_BLOCKED=PASS
+CANDIDATE_SAMEBOOT_BLOCKED=PASS
+[    6.645265] reboot: Power down
+
+=== VM boot 2 ===
+[    0.069890] virt/tdx: TDX not supported by the host platform
+[    1.034993] systemd[1]: Failed to initialize kmod context: Operation not supported
+
+Welcome to MultiDroid VM Lab!
+
+
+[  OK  ] Started multidroid-control.service.
+
+[  OK  ] Started waydroid-multi-container.service.
+
+[  OK  ] Reached target default.target.
+
+CANDIDATE_REBOOT_RECOVERED=PASS
+[    2.470182] reboot: Power down

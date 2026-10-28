@@ -1,0 +1,42 @@
+=== VM boot 1 ===
+[    0.067787] virt/tdx: TDX not supported by the host platform
+P+q6E616D65\[    1.027591] systemd[1]: Failed to initialize kmod context: Operation not supported
+[18t7[32766;32766H[6n8[!p]104\[0m[?7h[1G[0J
+[0;1;39mWelcome to [0m[1mMultiDroid VM Lab[0m[0;1;39m![0m
+
+
+]3008;start=595d143c77274341aa89082d34c2f08a;user=root;hostname=cachyos;machineid=dfb6fde62e3f4885a87974bed0a42be2;bootid=7f1b77a746b44dc4a2fa07a81e01e915;pid=1;pidfdid=1;comm=systemd;type=boot\[[0;32m  OK  [0m] Started [0;1;39mmultidroid-control.service[0m.
+
+[[0;32m  OK  [0m] Started [0;1;39mwaydroid-multi-container.service[0m.
+
+[[0;32m  OK  [0m] Reached target [0;1;39mdefault.target[0m.
+
+SYSTEMD_BPF_ATTACH_FAILURE_BLOCKED=PASS
+SYSTEMD_BPF_BLOCKED_CRASH
+SYSTEMD_BPF_FOREIGN_PID_PRESERVED=PASS
+SYSTEMD_BPF_FOREIGN_CGROUP_PRESERVED=PASS
+SYSTEMD_BPF_CLEANUP_CRASH
+SYSTEMD_BPF_BLOCKED_RECOVERED=PASS
+SYSTEMD_BPF_EMPTY_CGROUP_RECOVERED=PASS
+SYSTEMD_BPF_RUNNING_CRASH
+SYSTEMD_BPF_SAMEBOOT_PASS
+SYSTEMD_BPF_REBOOT_DURING_CLEANUP
+[   10.556389] reboot: Power down
+
+=== VM boot 2 ===
+[    0.131989] virt/tdx: TDX not supported by the host platform
+P+q6E616D65\[    1.331794] systemd[1]: Failed to initialize kmod context: Operation not supported
+[18t7[32766;32766H[6n8[!p]104\[0m[?7h[1G[0J
+[0;1;39mWelcome to [0m[1mMultiDroid VM Lab[0m[0;1;39m![0m
+
+
+]3008;start=c695d747769d443bb4eb160ffc7eb944;user=root;hostname=cachyos;machineid=dfb6fde62e3f4885a87974bed0a42be2;bootid=7a44f7698c4b4be8b3bbcc17e76e05a3;pid=1;pidfdid=1;comm=systemd;type=boot\[[0;32m  OK  [0m] Started [0;1;39mmultidroid-control.service[0m.
+
+[[0;32m  OK  [0m] Started [0;1;39mwaydroid-multi-container.service[0m.
+
+[[0;32m  OK  [0m] Reached target [0;1;39mdefault.target[0m.
+
+SYSTEMD_BPF_INCOMPLETE_STILL_BLOCKED=PASS
+SYSTEMD_BPF_CLEANUP_REBOOT_RECOVERED=PASS
+SYSTEMD_BPF_REBOOT_PASS
+[    2.764567] reboot: Power down

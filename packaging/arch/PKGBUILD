@@ -1,0 +1,16 @@
+# Experimental review artifact; do not install before AUDITORIA_PRIVILEGIOS.md is resolved.
+pkgname=waydroid-multi-experimental
+pkgver=0.0.1
+pkgrel=2
+pkgdesc="Experimental isolated Waydroid multi-instance service"
+arch=('any')
+url='https://github.com/waydroid/waydroid'
+license=('GPL-3.0-or-later')
+depends=('python' 'python-dbus' 'python-gobject' 'python-gbinder' 'dbus' 'systemd' 'util-linux')
+makedepends=('make')
+source=("$pkgname-$pkgver.tar.gz")
+sha256sums=('db79b3e701a65cf3a1a480af0261e36c9a3a99c47fd81645ce4ebf936a083779')
+
+package() {
+  make -C "$srcdir/$pkgname-$pkgver" stage-multi-privileged DESTDIR="$pkgdir"
+}

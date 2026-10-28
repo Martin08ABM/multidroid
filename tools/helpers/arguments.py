@@ -139,6 +139,9 @@ def arguments_bugreport(subparser):
 def arguments():
     parser = argparse.ArgumentParser(prog="waydroid")
 
+    parser.add_argument("--instance", help="registered experimental instance name")
+    parser.add_argument("--instance-root", help="experimental instance registry root")
+
     # Other
     parser.add_argument("-V", "--version", action="version",
                         version=tools.config.version)
@@ -158,6 +161,8 @@ def arguments():
 
     # Actions
     sub = parser.add_subparsers(title="action", dest="action")
+
+    sub.add_parser("instance-info", help="show resolved instance paths without starting Android")
 
     arguments_status(sub)
     arguments_log(sub)

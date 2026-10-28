@@ -34,7 +34,7 @@ def migration(args):
 def upgrade(args):
     get_config(args)
     status = "STOPPED"
-    if os.path.exists(tools.config.defaults["lxc"] + "/waydroid"):
+    if os.path.exists(args.instance_context.lxc_dir):
         status = helpers.lxc.status(args)
     if status != "STOPPED":
         logging.info("Stopping container")

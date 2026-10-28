@@ -5,8 +5,14 @@
 import os
 import dbus
 
-def DBusContainerService(object_path="/ContainerManager", intf="id.waydro.ContainerManager"):
-    return dbus.Interface(dbus.SystemBus().get_object("id.waydro.Container", object_path), intf)
+def DBusContainerService(object_path="/ContainerManager", intf="id.waydro.ContainerManager", resources=None):
+    destination = "id.waydro.Container"
+    if resources is not None:
+        destination, object_path = resources.system_bus, resources.container_object
+    return dbus.Interface(dbus.SystemBus().get_object(destination, object_path), intf)
 
-def DBusSessionService(object_path="/SessionManager", intf="id.waydro.SessionManager"):
-    return dbus.Interface(dbus.SessionBus().get_object("id.waydro.Session", object_path), intf)
+def DBusSessionService(object_path="/SessionManager", intf="id.waydro.SessionManager", resources=None):
+    destination = "id.waydro.Session"
+    if resources is not None:
+        destination, object_path = resources.session_bus, resources.session_object
+    return dbus.Interface(dbus.SessionBus().get_object(destination, object_path), intf)

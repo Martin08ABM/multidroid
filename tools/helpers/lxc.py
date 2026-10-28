@@ -72,9 +72,9 @@ def generate_nodes_lxc_config(args):
         make_entry(n)
 
     # Binder dev nodes
-    make_entry("/dev/" + args.BINDER_DRIVER, "dev/binder", check=False)
-    make_entry("/dev/" + args.VNDBINDER_DRIVER, "dev/vndbinder", check=False)
-    make_entry("/dev/" + args.HWBINDER_DRIVER, "dev/hwbinder", check=False)
+    make_entry(tools.helpers.drivers.binder_node_path(args.BINDER_DRIVER), "dev/binder", check=False)
+    make_entry(tools.helpers.drivers.binder_node_path(args.VNDBINDER_DRIVER), "dev/vndbinder", check=False)
+    make_entry(tools.helpers.drivers.binder_node_path(args.HWBINDER_DRIVER), "dev/hwbinder", check=False)
 
     if args.vendor_type != "MAINLINE":
         if not make_entry("/dev/hwbinder", "dev/host_hwbinder"):
@@ -92,7 +92,7 @@ def generate_nodes_lxc_config(args):
     make_entry("/sys/module/lowmemorykiller", options="bind,create=dir,optional 0 0")
 
     # Mount host permissions
-    make_entry(tools.config.defaults["host_perms"],
+    make_entry(args.instance_context.host_perms,
                "vendor/etc/host-permissions", options="bind,optional 0 0")
 
     # Necessary sw_sync node for HWC
@@ -140,8 +140,18 @@ def get_apparmor_status(args):
         enabled = False
     return enabled
 
+def render_lxc_config(context, snippets, arch, post_stop_script):
+    """Render upstream templates for exactly one context, without side effects."""
+    result = "".join(Path(path).read_text() for path in snippets)
+    result = result.replace("/var/lib/waydroid/lxc/waydroid", context.lxc_dir)
+    result = result.replace("/var/lib/waydroid/rootfs", context.rootfs)
+    result = result.replace("lxc.uts.name = waydroid", "lxc.uts.name = " + context.lxc_name)
+    result = result.replace("lxc.utsname = waydroid", "lxc.utsname = " + context.lxc_name)
+    return result.replace("LXCARCH", arch).replace("LXCPOSTSTOP", post_stop_script)
+
+
 def set_lxc_config(args):
-    lxc_path = tools.config.defaults["lxc"] + "/waydroid"
+    lxc_path = args.instance_context.lxc_dir
     lxc_ver = get_lxc_version(args)
     if lxc_ver == 0:
         raise OSError("LXC is not installed")
@@ -160,13 +170,9 @@ def set_lxc_config(args):
 
     command = ["mkdir", "-p", lxc_path]
     tools.helpers.run.user(args, command)
-    command = ["sh", "-c", "cat {} > \"{}\"".format(' '.join('"{0}"'.format(w) for w in config_snippets), lxc_path + "/config")]
-    tools.helpers.run.user(args, command)
-    command = ["sed", "-i", "s/LXCARCH/{}/".format(platform.machine()), lxc_path + "/config"]
-    tools.helpers.run.user(args, command)
     post_stop_script = tools.config.tools_src + "/data/scripts/waydroid-post-stop.sh"
-    command = ["sed", "-i", "s#LXCPOSTSTOP#{}#".format(post_stop_script), lxc_path + "/config"]
-    tools.helpers.run.user(args, command)
+    rendered = render_lxc_config(args.instance_context, config_snippets, platform.machine(), post_stop_script)
+    Path(lxc_path, "config").write_text(rendered)
     command = ["cp", "-fpr", seccomp_profile, lxc_path + "/waydroid.seccomp"]
     tools.helpers.run.user(args, command)
     if get_apparmor_status(args):
@@ -212,7 +218,7 @@ def generate_session_lxc_config(args, session):
     if not make_entry(session["waydroid_data"], "data", options="rbind 0 0"):
         raise OSError("Failed to bind userdata")
 
-    lxc_path = tools.config.defaults["lxc"] + "/waydroid"
+    lxc_path = args.instance_context.lxc_dir
     config_nodes_tmp_path = args.work + "/config_session"
     with open(config_nodes_tmp_path, "w") as f:
         f.writelines(node + "\n" for node in nodes)
@@ -370,8 +376,8 @@ def make_base_props(args):
 
 
 def setup_host_perms(args):
-    if not os.path.exists(tools.config.defaults["host_perms"]):
-        os.mkdir(tools.config.defaults["host_perms"])
+    if not os.path.exists(args.instance_context.host_perms):
+        os.mkdir(args.instance_context.host_perms)
 
     treble = tools.helpers.props.host_get(args, "ro.treble.enabled")
     if treble != "true":
@@ -395,10 +401,10 @@ def setup_host_perms(args):
                 "/odm/etc/permissions/sku_{}/android.hardware.consumerir.xml".format(sku))
 
     for filename in copy_list:
-        shutil.copy(filename, tools.config.defaults["host_perms"])
+        shutil.copy(filename, args.instance_context.host_perms)
 
 def status(args):
-    command = ["lxc-info", "-P", tools.config.defaults["lxc"], "-n", "waydroid", "-sH"]
+    command = ["lxc-info", "-P", args.instance_context.lxc_path, "-n", args.instance_context.lxc_name, "-sH"]
     try:
         return tools.helpers.run.user(args, command, output_return=True).strip()
     except Exception:
@@ -418,8 +424,8 @@ def wait_for_running(args):
         raise OSError("container failed to start")
 
 def start(args):
-    command = ["lxc-start", "-P", tools.config.defaults["lxc"],
-               "-F", "-n", "waydroid", "--", "/init"]
+    command = ["lxc-start", "-P", args.instance_context.lxc_path,
+               "-F", "-n", args.instance_context.lxc_name, "--", "/init"]
     tools.helpers.run.user(args, command, output="background")
     wait_for_running(args)
     # Workaround lxc-start changing stdout/stderr permissions to 700
@@ -428,16 +434,16 @@ def start(args):
 
 def stop(args):
     command = ["lxc-stop", "-P",
-               tools.config.defaults["lxc"], "-n", "waydroid", "-k"]
+               args.instance_context.lxc_path, "-n", args.instance_context.lxc_name, "-k"]
     tools.helpers.run.user(args, command)
 
 def freeze(args):
-    command = ["lxc-freeze", "-P", tools.config.defaults["lxc"], "-n", "waydroid"]
+    command = ["lxc-freeze", "-P", args.instance_context.lxc_path, "-n", args.instance_context.lxc_name]
     tools.helpers.run.user(args, command)
 
 def unfreeze(args):
     command = ["lxc-unfreeze", "-P",
-               tools.config.defaults["lxc"], "-n", "waydroid"]
+               args.instance_context.lxc_path, "-n", args.instance_context.lxc_name]
     tools.helpers.run.user(args, command)
 
 ANDROID_ENV = {
@@ -455,8 +461,8 @@ ANDROID_ENV = {
 def android_env_attach_options(args):
     local_env = ANDROID_ENV.copy()
     # Include CLASSPATH env that was generated by Android
-    command = ["lxc-attach", "-P", tools.config.defaults["lxc"],
-               "-n", "waydroid", "--clear-env", "--",
+    command = ["lxc-attach", "-P", args.instance_context.lxc_path,
+               "-n", args.instance_context.lxc_name, "--clear-env", "--",
                "/system/bin/cat" ,"/data/system/environ/classpath"]
     allowed = ["CLASSPATH", "SYSTEMSERVER"]
     with suppress(Exception):
@@ -477,8 +483,8 @@ def shell(args):
     elif state != "RUNNING":
         logging.error("WayDroid container is {}".format(state))
         return
-    command = ["lxc-attach", "-P", tools.config.defaults["lxc"],
-               "-n", "waydroid", "--clear-env"]
+    command = ["lxc-attach", "-P", args.instance_context.lxc_path,
+               "-n", args.instance_context.lxc_name, "--clear-env"]
     command.extend(android_env_attach_options(args))
     if args.uid is not None:
         command.append("--uid="+str(args.uid))

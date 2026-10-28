@@ -32,11 +32,20 @@ INSTALL_APPARMOR_DIR := $(DESTDIR)$(APPARMOR_DIR)
 build:
 	@echo "Nothing to build, run 'make install' to copy the files!"
 
+# Review-only staging: never targets the host when DESTDIR is omitted.
+stage-multi-privileged:
+	test -n "$(DESTDIR)" && test "$(DESTDIR)" != /
+	install -d "$(DESTDIR)/usr/lib/waydroid-multi/multiinstance" "$(DESTDIR)/usr/share/dbus-1/system.d" "$(DESTDIR)/usr/lib/systemd/system"
+	install -m 0644 multiinstance/__init__.py multiinstance/binder.py multiinstance/privileged.py multiinstance/resources.py multiinstance/context.py multiinstance/dbus_service.py multiinstance/identities.py multiinstance/helper.py multiinstance/cgroup_anchor.py multiinstance/bpf_policy.py multiinstance/supervisor.py "$(DESTDIR)/usr/lib/waydroid-multi/multiinstance/"
+	install -m 0644 waydroid-multi-service.py waydroid-privileged.py waydroid-binder-helper.py waydroid-helper-launcher.py "$(DESTDIR)/usr/lib/waydroid-multi/"
+	install -m 0644 packaging/dbus/id.waydro.Multi.Container.conf "$(DESTDIR)/usr/share/dbus-1/system.d/"
+	install -m 0644 packaging/systemd/waydroid-multi-container.service "$(DESTDIR)/usr/lib/systemd/system/"
+
 install:
 	install -d $(INSTALL_WAYDROID_DIR) $(INSTALL_BIN_DIR) $(INSTALL_DBUS_DIR)/system.d $(INSTALL_POLKIT_DIR)/actions
 	install -d $(INSTALL_APPS_DIR) $(INSTALL_METAINFO_DIR) $(INSTALL_ICONS_DIR)/hicolor/512x512/apps
 	install -d $(INSTALL_APPS_DIRECTORY_DIR) $(INSTALL_APPS_MENU_DIR)
-	cp -a data tools waydroid.py $(INSTALL_WAYDROID_DIR)
+	cp -a data tools multiinstance waydroid.py waydroid-multi.py waydroid-privileged.py $(INSTALL_WAYDROID_DIR)
 	ln -sf \
 		$$(realpath --relative-to=$(INSTALL_BIN_DIR) $(INSTALL_WAYDROID_DIR)/waydroid.py) \
 		$(INSTALL_BIN_DIR)/waydroid

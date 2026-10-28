@@ -1,0 +1,20 @@
+# Experimental staging artifact. Do not enable until AUDITORIA_PRIVILEGIOS.md is resolved.
+[Unit]
+Description=Experimental Waydroid multi-instance manager
+After=dbus.service
+Requires=dbus.service
+
+[Service]
+Type=dbus
+BusName=id.waydro.Multi.Container
+ExecStart=/usr/bin/python3 -B -I /usr/lib/waydroid-multi/waydroid-multi-service.py
+WorkingDirectory=/
+UMask=0022
+Environment=PATH=/usr/sbin:/usr/bin
+NoNewPrivileges=yes
+# Proposed delegation only; the service is still disabled and does not use it.
+Delegate=yes
+CapabilityBoundingSet=CAP_SYS_ADMIN CAP_CHOWN CAP_DAC_OVERRIDE CAP_FOWNER
+
+[Install]
+WantedBy=multi-user.target

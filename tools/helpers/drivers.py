@@ -6,6 +6,7 @@ import os
 import glob
 import fcntl
 import struct
+import re
 import tools.config
 import tools.helpers.run
 from contextlib import suppress
@@ -17,6 +18,19 @@ BINDER_DRIVERS = [
     "bonder",
     "binder"
 ]
+
+
+def binder_node_path(name):
+    """Resolve legacy names and explicitly scoped experimental Binder paths."""
+    if not isinstance(name, str):
+        raise ValueError("invalid Binder path")
+    if re.fullmatch(r"[A-Za-z0-9_-]+", name):
+        return "/dev/" + name
+    if re.fullmatch(r"/proc/self/fd/[0-9]+/(binder|hwbinder|vndbinder)", name):
+        return name
+    if re.fullmatch(r"/run/waydroid-multi/binderfs/[0-9a-f]{32}/(binder|hwbinder|vndbinder)", name):
+        return name
+    raise ValueError("invalid Binder path")
 VNDBINDER_DRIVERS = [
     "anbox-vndbinder",
     "vndpuddlejumper",
